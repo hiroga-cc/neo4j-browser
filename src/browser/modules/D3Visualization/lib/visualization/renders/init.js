@@ -140,9 +140,10 @@ const nodeRing = new Renderer({
 
 const nodeImage = new Renderer({
   onGraphChange (selection, viz) {
-    console.log(`selection: ${selection}, viz: ${viz}`)
     const defs = selection.selectAll('defs').data(node => {
       if (node.propertyMap.image_url) {
+        console.log(`node: ${JSON.stringify(node)}`)
+
         return [node.propertyMap.image_url]
       } else return []
     })
