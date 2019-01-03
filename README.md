@@ -10,6 +10,13 @@
 
 `yarn start` and point your web browser to `http://localhost:8080`.
 
+### How to use patch
+```
+match(u:User) where u.name = "hiroaki"
+set u.image_url = "https://4.bp.blogspot.com/-r-LmXhD16nU/U9zq5lMIsEI/AAAAAAAAkbI/p4VUnCQdi4s/s1600/lower_u.png"
+return u
+```
+
 ### Testing
 
 `yarn test` to run a single test run. A linter will run first.

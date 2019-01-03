@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Original Patch from: https://groups.google.com/forum/#!topic/neo4j/jdHIM_OH8LE
+ */
 import Renderer from '../components/renderer'
 const noop = function () {}
 
@@ -134,6 +138,62 @@ const nodeRing = new Renderer({
   onTick: noop
 })
 
+const nodeImage = new Renderer({
+  onGraphChange (selection, viz) {
+    console.log(`selection: ${selection}, viz: ${viz}`)
+    const defs = selection.selectAll('defs').data(node => {
+      if (node.propertyMap.image_url) {
+        return [node.propertyMap.image_url]
+      } else return []
+    })
+    const circle = selection.selectAll('circle.filled').data(node => {
+      if (node.propertyMap.image_url) {
+        return [node]
+      } else {
+        return []
+      }
+    })
+
+    defs
+      .enter()
+      .append('defs')
+      .append('pattern')
+      .attr({
+        id: 'img-fill',
+        patternUnits: 'userSpaceOnUse',
+        x: -39,
+        y: -39,
+        height: 156,
+        width: 156
+      })
+      .append('image')
+      .attr('xlink:href', link => link)
+      .attr({
+        x: 0,
+        y: 0,
+        type: 'image/png',
+        height: 78,
+        width: 78
+      })
+
+    circle
+      .enter()
+      .append('circle')
+      .classed('filled', true)
+      .attr({
+        cx: 0,
+        cy: 0,
+        r: node => node.radius - 1,
+        fill: 'url(#img-fill)'
+      })
+
+    defs.exit().remove()
+    circle.exit().remove()
+  },
+
+  onTick: noop
+})
+
 const arrowPath = new Renderer({
   name: 'arrowPath',
   onGraphChange (selection, viz) {
@@ -229,6 +289,7 @@ node.push(nodeOutline)
 node.push(nodeIcon)
 node.push(nodeCaption)
 node.push(nodeRing)
+node.push(nodeImage)
 
 const relationship = []
 relationship.push(arrowPath)
